@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: dim_zones
+    description: "Zone dimension - NYC taxi pickup/dropoff zones"
+    columns:
+      - name: zone_id
+        description: "Primary key - unique zone identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: borough
+        description: "NYC borough this zone belongs to"
+
+  - name: dim_payment_types
+    description: "Payment method dimension"
+    columns:
+      - name: payment_type_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+      - name: payment_method_group
+        description: "Grouped payment category"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Cash', 'Digital', 'Other']
+
+  - name: dim_drivers
+    description: "Driver dimension, enriched with city info"
+    columns:
+      - name: driver_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_dates
+    description: "Date dimension, generated for full year 2024"
+    columns:
+      - name: date_id
+        description: "Primary key - one row per calendar date"
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_trips
+    description: "Fact table - one row per trip"
+    columns:
+      - name: status
+        description: "completed if total_amount > 0, else cancelled"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['completed', 'cancelled']
+
+      - name: pickup_zone_id
+        description: "FK to dim_zones"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_zones')
+                field: zone_id
+
+      - name: payment_type_id
+        description: "FK to dim_payment_types"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payment_types')
+                field: payment_type_id

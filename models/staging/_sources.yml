@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    database: JEENY_ANALYTICS
+    schema: RAW
+    tables:
+      - name: raw_trips
+      - name: drivers
+      - name: cities
+      - name: zones
+      - name: payment_types
